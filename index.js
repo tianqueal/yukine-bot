@@ -37,6 +37,13 @@ client.once(Events.ClientReady, (c) => {
   })
 })
 
+const imageTypes = [
+  {
+    name: "png",
+    value: "png",
+  }
+]
+
 const commands = [
   {
     name: "saludo",
@@ -148,6 +155,13 @@ const commands = [
         type: 3,
         required: true,
       },
+      {
+        name: "tipo",
+        description: "Tipo de imagen",
+        type: 3,
+        required: true,
+        choices: [...imageTypes]
+      }
     ],
   }
 ]
@@ -372,6 +386,12 @@ client.on("interactionCreate", async (interaction) => {
       await interaction.deferReply();
 
       const imageUrl = interaction.options.getString("url")
+      const imageType = interaction.options.getString("tipo")
+
+      if (!imageTypes.some(type => type.value === imageType)) {
+        await interaction.editReply("Tipo de imagen no válido.")
+        return
+      }
 
       try {
         const response = await fetch(imageUrl)
@@ -384,7 +404,7 @@ client.on("interactionCreate", async (interaction) => {
 
         const imageBuffer = Buffer.from(arrayBuffer);
 
-        const attachment = new AttachmentBuilder(imageBuffer, { name: 'image' });
+        const attachment = new AttachmentBuilder(imageBuffer, { name: `image.${imageType}` });
 
         await interaction.editReply({ files: [attachment] })
         } catch (error) {
