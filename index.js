@@ -136,6 +136,18 @@ const commands = [
         required: true,
       },
     ],
+  },
+  {
+    name: "imagen",
+    description: "Obtiene la imagen de una URL",
+    options: [
+      {
+        name: "url",
+        description: "URL de la imagen",
+        type: 3,
+        required: true,
+      },
+    ],
   }
 ]
 
@@ -352,6 +364,29 @@ client.on("interactionCreate", async (interaction) => {
     case "decir":
       const decir = interaction.options.getString("mensaje")
       await interaction.reply(decir)
+      break
+
+    case "imagen":
+
+      const imageUrl = interaction.options.getString("url")
+
+      try {
+        const response = await fetch(imageUrl)
+
+        if (!response.ok) {
+          throw new Error('No se pudo obtener la imagen')
+        }
+
+        const imageBuffer = await response.buffer()
+
+        const attachment = new AttachmentBuilder(imageBuffer, { name: 'imagen' })
+
+        await interaction.reply({ files: [attachment] })
+        } catch (error) {
+          console.error("Error al obtener la imagen:", error)
+          await interaction.reply("Hubo un error al procesar la imagen.")
+        }
+
       break
     default:
       await interaction.reply(`No existe ese comando :(`)
