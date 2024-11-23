@@ -125,6 +125,18 @@ const commands = [
       },
     ],
   },
+  {
+    name: "decir",
+    description: "Yukine repite lo que le digas",
+    options: [
+      {
+        name: "mensaje",
+        description: "Lo que quieres que Yukine repita",
+        type: 3,
+        required: true,
+      },
+    ],
+  }
 ]
 
 const rest = new REST({ version: "9" }).setToken(TOKEN)
@@ -336,6 +348,10 @@ client.on("interactionCreate", async (interaction) => {
       }
 
       await interaction.reply({ embeds: [embed] })
+      break
+    case "decir":
+      const decir = interaction.options.getString("mensaje")
+      await interaction.reply(decir)
       break
     default:
       await interaction.reply(`No existe ese comando :(`)
