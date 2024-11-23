@@ -17,6 +17,7 @@ const {
   Events,
   GatewayIntentBits,
   ActivityType,
+  AttachmentBuilder,
 } = require("discord.js")
 const { REST } = require("@discordjs/rest")
 const { Routes } = require("discord-api-types/v9")
@@ -368,6 +369,8 @@ client.on("interactionCreate", async (interaction) => {
 
     case "imagen":
 
+      await interaction.deferReply();
+
       const imageUrl = interaction.options.getString("url")
 
       try {
@@ -377,14 +380,16 @@ client.on("interactionCreate", async (interaction) => {
           throw new Error('No se pudo obtener la imagen')
         }
 
-        const imageBuffer = await response.buffer()
+        const arrayBuffer = await response.arrayBuffer();
 
-        const attachment = new AttachmentBuilder(imageBuffer, { name: 'imagen' })
+        const imageBuffer = Buffer.from(arrayBuffer);
 
-        await interaction.reply({ files: [attachment] })
+        const attachment = new AttachmentBuilder(imageBuffer, { name: 'image' });
+
+        await interaction.editReply({ files: [attachment] })
         } catch (error) {
           console.error("Error al obtener la imagen:", error)
-          await interaction.reply("Hubo un error al procesar la imagen.")
+          await interaction.editReply("Hubo un error al procesar la imagen.")
         }
 
       break
