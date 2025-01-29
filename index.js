@@ -261,7 +261,7 @@ client.on("interactionCreate", async (interaction) => {
             path: `/client/v4/accounts/ed0fc46d6934055a05a3b9e925eb14b8/ai/run/${model}`,
             method: "POST",
             headers: {
-              Authorization: `Bearer ${process.env["CF_API_TOKEN"]}`,
+              Authorization: `Bearer ${process.env["CF_API_KEY"]}`,
               "Content-Type": "application/json",
             },
           }
@@ -290,7 +290,7 @@ client.on("interactionCreate", async (interaction) => {
 
       async function run(msg) {
         try {
-          const result = await runAI("@cf/meta/llama-2-7b-chat-int8", {
+          const result = await runAI("@cf/meta/llama-3-8b-instruct", {
             messages: [
               {
                 role: "system",
@@ -310,26 +310,17 @@ client.on("interactionCreate", async (interaction) => {
         }
       }
 
-      async function main(msg) {
-        try {
-          const result = await run(msg)
-          return JSON.stringify(result)
-        } catch (error) {
-          console.error("Error en la ejecución principal:", error)
-          return JSON.stringify({ error: "Error en la ejecución principal" })
-        }
-      }
-
       const mensaje = interaction.options.getString("mensaje")
-      main(mensaje)
-        .then((resultString) => {
-          resultString = resultString.replace(
-            /^\{"result":\{"response":"(.+)"\},"success":true,"errors":\[\],"messages":\[\]\}$/,
-            "$1"
-          )
-          interaction.reply(resultString)
-        })
-        .catch((error) => console.error(error))
+
+      await interaction.deferReply();
+
+      try {
+        const response = await run(mensaje)
+        await interaction.editReply(response.result.response);
+      } catch (error) {
+        console.error("Error al procesar la solicitud:", error)
+        await interaction.editReply("Error procesando tu solicitud.");
+      }
       break
     case "responder":
       const canal =
