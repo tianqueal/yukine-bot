@@ -1,0 +1,12 @@
+services:
+  app:
+    build: .
+    ports:
+      - "3002:3000"
+    environment:
+      DISCORD_TOKEN: ${DISCORD_TOKEN}
+      OWNER_ID: ${OWNER_ID}
+      CLIENT_ID: ${CLIENT_ID}
+      CF_API_KEY: ${CF_API_KEY}
+      PORT: ${PORT}
+      GUILD_ID: ${GUILD_ID}
