@@ -22,12 +22,7 @@ export const avatar: Command = {
       const avatarEmbed = new EmbedBuilder()
         .setColor(0x0099ff)
         .setTitle(`Avatar de ${targetUser.username}`)
-        .setImage(targetUser.displayAvatarURL({ size: 1024 }))
-        .setTimestamp()
-        .setFooter({
-          text: `Solicitado por ${interaction.user.username}`,
-          iconURL: interaction.user.displayAvatarURL(),
-        });
+        .setImage(targetUser.displayAvatarURL({ size: 1024 }));
 
       await interaction.reply({ embeds: [avatarEmbed] });
     } catch (error) {
