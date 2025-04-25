@@ -1,0 +1,25 @@
+# Git
+.git
+.gitignore
+
+# Node.js
+node_modules
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# TypeScript
+dist
+*.tsbuildinfo
+
+# Entorno
+.env
+.env.*
+
+# Otros
+legacy
+.vscode
+*.md
+!README.md
+*.log
+logs

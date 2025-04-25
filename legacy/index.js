@@ -17,6 +17,7 @@ const {
   Events,
   GatewayIntentBits,
   ActivityType,
+  AttachmentBuilder,
 } = require("discord.js")
 const { REST } = require("@discordjs/rest")
 const { Routes } = require("discord-api-types/v9")
@@ -35,6 +36,13 @@ client.once(Events.ClientReady, (c) => {
     status: "online",
   })
 })
+
+const imageTypes = [
+  {
+    name: "png",
+    value: "png",
+  }
+]
 
 const commands = [
   {
@@ -125,6 +133,37 @@ const commands = [
       },
     ],
   },
+  {
+    name: "decir",
+    description: "Yukine repite lo que le digas",
+    options: [
+      {
+        name: "mensaje",
+        description: "Lo que quieres que Yukine repita",
+        type: 3,
+        required: true,
+      },
+    ],
+  },
+  {
+    name: "imagen",
+    description: "Obtiene la imagen de una URL",
+    options: [
+      {
+        name: "url",
+        description: "URL de la imagen",
+        type: 3,
+        required: true,
+      },
+      {
+        name: "tipo",
+        description: "Tipo de imagen",
+        type: 3,
+        required: true,
+        choices: [...imageTypes]
+      }
+    ],
+  }
 ]
 
 const rest = new REST({ version: "9" }).setToken(TOKEN)
@@ -222,7 +261,7 @@ client.on("interactionCreate", async (interaction) => {
             path: `/client/v4/accounts/ed0fc46d6934055a05a3b9e925eb14b8/ai/run/${model}`,
             method: "POST",
             headers: {
-              Authorization: `Bearer ${process.env["CF_API_TOKEN"]}`,
+              Authorization: `Bearer ${process.env["CF_API_KEY"]}`,
               "Content-Type": "application/json",
             },
           }
@@ -251,7 +290,7 @@ client.on("interactionCreate", async (interaction) => {
 
       async function run(msg) {
         try {
-          const result = await runAI("@cf/meta/llama-2-7b-chat-int8", {
+          const result = await runAI("@cf/meta/llama-3-8b-instruct", {
             messages: [
               {
                 role: "system",
@@ -271,26 +310,17 @@ client.on("interactionCreate", async (interaction) => {
         }
       }
 
-      async function main(msg) {
-        try {
-          const result = await run(msg)
-          return JSON.stringify(result)
-        } catch (error) {
-          console.error("Error en la ejecución principal:", error)
-          return JSON.stringify({ error: "Error en la ejecución principal" })
-        }
-      }
-
       const mensaje = interaction.options.getString("mensaje")
-      main(mensaje)
-        .then((resultString) => {
-          resultString = resultString.replace(
-            /^\{"result":\{"response":"(.+)"\},"success":true,"errors":\[\],"messages":\[\]\}$/,
-            "$1"
-          )
-          interaction.reply(resultString)
-        })
-        .catch((error) => console.error(error))
+
+      await interaction.deferReply();
+
+      try {
+        const response = await run(mensaje)
+        await interaction.editReply(response.result.response);
+      } catch (error) {
+        console.error("Error al procesar la solicitud:", error)
+        await interaction.editReply("Error procesando tu solicitud.");
+      }
       break
     case "responder":
       const canal =
@@ -336,6 +366,43 @@ client.on("interactionCreate", async (interaction) => {
       }
 
       await interaction.reply({ embeds: [embed] })
+      break
+    case "decir":
+      const decir = interaction.options.getString("mensaje")
+      await interaction.reply(decir)
+      break
+
+    case "imagen":
+
+      await interaction.deferReply();
+
+      const imageUrl = interaction.options.getString("url")
+      const imageType = interaction.options.getString("tipo")
+
+      if (!imageTypes.some(type => type.value === imageType)) {
+        await interaction.editReply("Tipo de imagen no válido.")
+        return
+      }
+
+      try {
+        const response = await fetch(imageUrl)
+
+        if (!response.ok) {
+          throw new Error('No se pudo obtener la imagen')
+        }
+
+        const arrayBuffer = await response.arrayBuffer();
+
+        const imageBuffer = Buffer.from(arrayBuffer);
+
+        const attachment = new AttachmentBuilder(imageBuffer, { name: `image.${imageType}` });
+
+        await interaction.editReply({ files: [attachment] })
+        } catch (error) {
+          console.error("Error al obtener la imagen:", error)
+          await interaction.editReply("Hubo un error al procesar la imagen.")
+        }
+
       break
     default:
       await interaction.reply(`No existe ese comando :(`)
