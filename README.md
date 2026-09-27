@@ -25,7 +25,7 @@ Esta versión es una refactorización completa del bot original, actualizada a l
 - Node.js v16.9.0 o superior
 - npm v8.0.0 o superior
 - Token de bot de Discord
-- API de Meta Llama3 (a través de Cloudflare Workers AI)
+- API de Meta Llama en Cloudflare Workers AI (por defecto `@cf/meta/llama-3.1-8b-instruct-fp8`)
 
 ## Instalación
 
@@ -51,6 +51,7 @@ npm install
      - `OWNER_ID`: Tu ID de usuario en Discord
      - `CF_API_KEY`: Key de API de Cloudflare (para características de IA)
      - `CF_ACCOUNT_ID`: ID de cuenta de Cloudflare
+     - `CF_AI_MODEL`: Modelo de IA en Cloudflare (opcional, por defecto `@cf/meta/llama-3.1-8b-instruct-fp8`)
 
 ## Desarrollo
 
