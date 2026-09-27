@@ -26,6 +26,7 @@ export const CONFIG = {
   // API Keys
   CF_API_KEY: process.env.CF_API_KEY || '',
   CF_ACCOUNT_ID: process.env.CF_ACCOUNT_ID || 'ed0fc46d6934055a05a3b9e925eb14b8',
+  CF_AI_MODEL: process.env.CF_AI_MODEL || '@cf/meta/llama-3.1-8b-instruct-fp8',
 
   // Bot intents
   INTENTS: [GatewayIntentBits.Guilds],
