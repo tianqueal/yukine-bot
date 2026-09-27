@@ -95,7 +95,7 @@ export const embed: Command = {
         if (isNaN(colorValue)) {
           colorValue = 0xccccff;
         }
-      } catch (error) {
+      } catch {
         colorValue = 0xccccff;
       }
 

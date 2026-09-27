@@ -142,7 +142,7 @@ export const hora: Command = {
             name: `${timezone} (${currentTime})`,
             value: timezone,
           };
-        } catch (e) {
+        } catch {
           // If there is an error with a time zone
           return {
             name: timezone,
