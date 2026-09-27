@@ -13,4 +13,5 @@ services:
       GUILD_ID: ${GUILD_ID}
       CF_API_KEY: ${CF_API_KEY}
       CF_ACCOUNT_ID: ${CF_ACCOUNT_ID}
+      CF_AI_MODEL: ${CF_AI_MODEL:-@cf/meta/llama-3.1-8b-instruct-fp8}
       PORT: 3000

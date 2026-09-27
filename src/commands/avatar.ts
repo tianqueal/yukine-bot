@@ -1,7 +1,7 @@
 /**
  * Avatar command - Shows a user's avatar
  */
-import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder, User } from 'discord.js';
+import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import { Command } from '../types';
 
 export const avatar: Command = {

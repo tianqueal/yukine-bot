@@ -94,7 +94,7 @@ export async function generateAIResponse(msg: string): Promise<AIResponse> {
       ...AI_PARAMETERS.DEFAULT,
     };
 
-    const result = await runAI('@cf/meta/llama-3-8b-instruct', input);
+    const result = await runAI(CONFIG.CF_AI_MODEL, input);
     return result;
   } catch (error: unknown) {
     console.error('Error when running the AI model:', error);
